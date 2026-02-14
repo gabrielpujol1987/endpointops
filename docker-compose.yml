@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: endpointops-postgres
+    environment:
+      POSTGRES_DB: endpointops
+      POSTGRES_USER: endpointops
+      POSTGRES_PASSWORD: endpointops
+    ports:
+      - "5432:5432"
+    volumes:
+      - endpointops_pg:/var/lib/postgresql/data
+
+volumes:
+  endpointops_pg:
