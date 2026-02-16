@@ -21,4 +21,9 @@ class DeviceController(
     @GetMapping("/devices/{id}")
     fun getDevice(@PathVariable id: String): DeviceResponse =
         service.getDevice(id)
+
+    @GetMapping("/devices/{id}/events")
+    fun getDeviceEvents(@PathVariable id: String) =
+        service.getDeviceEvents(id)
+
 }
