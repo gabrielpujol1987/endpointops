@@ -45,5 +45,20 @@ class DeviceService(
             NoSuchElementException("Device not found: $id")
         }
         return DeviceResponse(device.id, device.hostname, device.lastSeenAt)
+        return DeviceResponse(device.id, device.hostname, device.lastSeenAt, device.hitcount)
+    }
+
+    @Transactional(readOnly = true)
+    fun getDeviceEvents(deviceId: String): List<DeviceEventResponse> {
+        return eventRepo.findTop50ByDeviceIdOrderByCreatedAtDesc(deviceId)
+            .map { e ->
+                DeviceEventResponse(
+                    id = e.id,
+                    deviceId = e.device.id,
+                    type = e.type,
+                    createdAt = e.createdAt,
+                    payload = e.payload
+                )
+            }
     }
 }
