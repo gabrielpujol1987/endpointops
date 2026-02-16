@@ -1,15 +1,17 @@
 package com.gabriel.endpointops.service
 
+import com.gabriel.endpointops.api.dto.DeviceEventResponse
 import com.gabriel.endpointops.api.dto.DeviceResponse
 import com.gabriel.endpointops.api.dto.PostEventRequest
 import com.gabriel.endpointops.domain.Device
 import com.gabriel.endpointops.domain.DeviceEvent
 import com.gabriel.endpointops.repo.DeviceEventRepository
 import com.gabriel.endpointops.repo.DeviceRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
-import com.gabriel.endpointops.api.dto.DeviceEventResponse
 
 @Service
 class DeviceService(
@@ -49,8 +51,8 @@ class DeviceService(
     }
 
     @Transactional(readOnly = true)
-    fun getDeviceEvents(deviceId: String): List<DeviceEventResponse> {
-        return eventRepo.findTop50ByDeviceIdOrderByCreatedAtDesc(deviceId)
+    fun getDeviceEvents(deviceId: String, pageable: Pageable): Page<DeviceEventResponse> {
+        return eventRepo.findByDevice_Id(deviceId, pageable)
             .map { e ->
                 DeviceEventResponse(
                     id = e.id,
