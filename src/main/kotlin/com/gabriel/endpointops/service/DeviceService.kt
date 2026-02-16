@@ -9,6 +9,7 @@ import com.gabriel.endpointops.repo.DeviceRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
+import com.gabriel.endpointops.api.dto.DeviceEventResponse
 
 @Service
 class DeviceService(
@@ -44,7 +45,6 @@ class DeviceService(
         val device = deviceRepo.findById(id).orElseThrow {
             NoSuchElementException("Device not found: $id")
         }
-        return DeviceResponse(device.id, device.hostname, device.lastSeenAt)
         return DeviceResponse(device.id, device.hostname, device.lastSeenAt, device.hitcount)
     }
 
