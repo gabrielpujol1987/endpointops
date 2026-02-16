@@ -6,6 +6,12 @@ spring:
     url: jdbc:postgresql://localhost:5432/endpointops
     username: endpointops
     password: endpointops
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 2000      # ms waiting for a free connection
+      idle-timeout: 600000          # ms
+      max-lifetime: 1800000         # ms
   jpa:
     hibernate:
       ddl-auto: update
