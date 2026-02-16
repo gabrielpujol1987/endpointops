@@ -7,8 +7,8 @@ import com.gabriel.endpointops.domain.Device
 import com.gabriel.endpointops.domain.DeviceEvent
 import com.gabriel.endpointops.repo.DeviceEventRepository
 import com.gabriel.endpointops.repo.DeviceRepository
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -51,7 +51,7 @@ class DeviceService(
     }
 
     @Transactional(readOnly = true)
-    fun getDeviceEvents(deviceId: String, pageable: Pageable): Page<DeviceEventResponse> {
+    fun getDeviceEvents(deviceId: String, pageable: Pageable): Slice<DeviceEventResponse> {
         return eventRepo.findByDevice_Id(deviceId, pageable)
             .map { e ->
                 DeviceEventResponse(

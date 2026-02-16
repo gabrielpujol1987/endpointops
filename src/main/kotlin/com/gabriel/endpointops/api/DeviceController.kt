@@ -5,8 +5,8 @@ import com.gabriel.endpointops.api.dto.DeviceResponse
 import com.gabriel.endpointops.api.dto.PostEventRequest
 import com.gabriel.endpointops.service.DeviceService
 import jakarta.validation.Valid
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
@@ -32,6 +32,6 @@ class DeviceController(
         @PathVariable id: String,
         @PageableDefault(size = 50, sort = ["createdAt"], direction = Sort.Direction.DESC)
         pageable: Pageable
-    ): Page<DeviceEventResponse> =
+    ): Slice<DeviceEventResponse> =
         service.getDeviceEvents(id, pageable)
 }
