@@ -20,7 +20,7 @@ class DeviceService(
         val now = Instant.now()
 
         val device = deviceRepo.findById(req.deviceId).orElseGet {
-            Device(id = req.deviceId, hostname = req.hostname, lastSeenAt = now)
+            Device(id = req.deviceId, hostname = req.hostname, lastSeenAt = now, hitcount = 1)
         }.also {
             it.hostname = req.hostname
             it.lastSeenAt = now
