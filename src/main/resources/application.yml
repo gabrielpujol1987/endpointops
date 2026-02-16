@@ -25,3 +25,9 @@ management:
     web:
       exposure:
         include: health,info
+
+endpointops:
+  pagination:
+    mode: SLICE   # PAGE | SLICE | CURSOR
+    default-size: 50
+    max-size: 100
