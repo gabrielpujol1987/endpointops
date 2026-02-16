@@ -5,7 +5,10 @@ import java.time.Instant
 import java.util.UUID
 
 @Entity
-@Table(name = "device_events")
+@Table(
+    name = "device_events",
+    indexes = [Index(name = "idx_device_id", columnList = "device_id")]
+)
 class DeviceEvent(
     @Id
     val id: UUID = UUID.randomUUID(),
