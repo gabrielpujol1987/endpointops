@@ -2,7 +2,7 @@ package com.gabriel.endpointops.domain
 
 import jakarta.persistence.*
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @Entity
 @Table(

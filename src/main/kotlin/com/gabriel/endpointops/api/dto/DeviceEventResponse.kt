@@ -1,7 +1,7 @@
 package com.gabriel.endpointops.api.dto
 
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 data class DeviceEventResponse(
     val id: UUID,
