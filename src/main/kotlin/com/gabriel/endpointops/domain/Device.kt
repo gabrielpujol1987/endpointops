@@ -13,5 +13,8 @@ class Device(
     var hostname: String,
 
     @Column(nullable = false)
-    var lastSeenAt: Instant = Instant.EPOCH
+    var lastSeenAt: Instant = Instant.EPOCH,
+
+    @Column(nullable = false)
+    var hitcount: Int = 0,
 )

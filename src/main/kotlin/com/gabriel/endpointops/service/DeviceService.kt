@@ -24,6 +24,7 @@ class DeviceService(
         }.also {
             it.hostname = req.hostname
             it.lastSeenAt = now
+            it.hitcount += 1
         }
 
         deviceRepo.save(device)
@@ -34,6 +35,8 @@ class DeviceService(
                 payload = req.payload
             )
         )
+
+        print("hitcount: '${device.hitcount}'")
     }
 
     @Transactional(readOnly = true)

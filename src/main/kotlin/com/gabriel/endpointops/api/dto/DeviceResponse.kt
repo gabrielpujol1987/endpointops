@@ -5,5 +5,6 @@ import java.time.Instant
 data class DeviceResponse(
     val id: String,
     val hostname: String,
-    val lastSeenAt: Instant
+    val lastSeenAt: Instant,
+    val hitcount: Int,
 )
