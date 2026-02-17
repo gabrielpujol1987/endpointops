@@ -5,6 +5,7 @@ import com.gabriel.endpointops.api.dto.DeviceResponse
 import com.gabriel.endpointops.api.dto.PagedResponse
 import com.gabriel.endpointops.api.dto.PostEventRequest
 import com.gabriel.endpointops.service.DeviceService
+import com.gabriel.endpointops.service.EventQueue
 import jakarta.validation.Valid
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -13,12 +14,17 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api")
 class DeviceController(
-    private val service: DeviceService
+    private val service: DeviceService,
+    private val queue: EventQueue,
 ) {
     @PostMapping("/events")
     fun postEvent(@RequestBody @Valid req: PostEventRequest): ResponseEntity<Void> {
-        service.ingestEvent(req)
-        return ResponseEntity.accepted().build()
+        val accepted = queue.offer(req)
+        return if (accepted) {
+            ResponseEntity.accepted().build()
+        } else {
+            ResponseEntity.status(429).build()
+        }
     }
 
     @GetMapping("/devices/{id}")
@@ -32,5 +38,9 @@ class DeviceController(
         @RequestParam(required = false) cursor: String?     // if mode=CURSOR
     ): PagedResponse<DeviceEventResponse> =
         service.getDeviceEvents(id, pageable, cursor)
+
+    @GetMapping("/queue/size")
+    fun getQueueSize(): Int =
+        queue.size()
 
 }
