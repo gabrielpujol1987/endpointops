@@ -14,11 +14,21 @@ object CursorCodec {
     }
 
     fun decode(cursor: String): EventCursor {
-        val raw = String(Base64.getUrlDecoder().decode(cursor), StandardCharsets.UTF_8)
-        val parts = raw.split(":")
-        require(parts.size == 2) { "Invalid cursor format" }
-        val ts = parts[0].toLong()
-        val id = UUID.fromString(parts[1])
-        return EventCursor(Instant.ofEpochMilli(ts), id)
+        try {
+            val rawBytes = Base64.getUrlDecoder().decode(cursor)
+            val raw = String(rawBytes, StandardCharsets.UTF_8)
+
+            val parts = raw.split(":")
+            if (parts.size != 2) throw InvalidCursorException("Invalid cursor format")
+
+            val ts = parts[0].toLongOrNull() ?: throw InvalidCursorException("Invalid cursor timestamp")
+            val id = runCatching { UUID.fromString(parts[1]) }
+                .getOrElse { throw InvalidCursorException("Invalid cursor UUID") }
+
+            return EventCursor(Instant.ofEpochMilli(ts), id)
+        } catch (ex: IllegalArgumentException) {
+            // Base64 decode failure
+            throw InvalidCursorException("Cursor must be a valid base64url token")
+        }
     }
 }

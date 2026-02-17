@@ -12,17 +12,20 @@ import java.util.*
 
 interface DeviceEventRepository : JpaRepository<DeviceEvent, UUID> {
 
+    // First page (no cursor): simple, no OFFSET (we'll always use page=0 in cursor mode)
+    fun findByDevice_IdOrderByCreatedAtDescIdDesc(deviceId: String, pageable: Pageable): List<DeviceEvent>
+
     fun findByDevice_Id(deviceId: String, pageable: Pageable): Page<DeviceEvent>
 
     fun findSliceByDevice_Id(deviceId: String, pageable: Pageable): Slice<DeviceEvent>
 
+    // Next pages (cursor required): no null checks in SQL
     @Query(
         """
         select e from DeviceEvent e
         where e.device.id = :deviceId
           and (
-            :cursorCreatedAt is null
-            or (e.createdAt < :cursorCreatedAt)
+            e.createdAt < :cursorCreatedAt
             or (e.createdAt = :cursorCreatedAt and e.id < :cursorId)
           )
         order by e.createdAt desc, e.id desc
@@ -30,8 +33,8 @@ interface DeviceEventRepository : JpaRepository<DeviceEvent, UUID> {
     )
     fun findByDeviceIdBeforeCursor(
         @Param("deviceId") deviceId: String,
-        @Param("cursorCreatedAt") cursorCreatedAt: Instant?,
-        @Param("cursorId") cursorId: UUID?,
+        @Param("cursorCreatedAt") cursorCreatedAt: Instant,
+        @Param("cursorId") cursorId: UUID,
         pageable: Pageable
     ): List<DeviceEvent>
 }

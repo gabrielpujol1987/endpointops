@@ -99,17 +99,19 @@ class DeviceService(
             }
 
             PaginationProperties.Mode.CURSOR -> {
-                val decoded = cursor?.let { CursorCodec.decode(it) }
+                val limitReq = PageRequest.of(0, size) // no sort here
 
-                // For cursor, we use "page 0" always; we don't use OFFSET.
-                val limitReq = PageRequest.of(0, size, defaultSort)
-
-                val rows = eventRepo.findByDeviceIdBeforeCursor(
-                    deviceId = deviceId,
-                    cursorCreatedAt = decoded?.createdAt,
-                    cursorId = decoded?.id,
-                    pageable = limitReq
-                )
+                val rows = if (cursor.isNullOrBlank()) {
+                    eventRepo.findByDevice_IdOrderByCreatedAtDescIdDesc(deviceId, limitReq)
+                } else {
+                    val decoded = CursorCodec.decode(cursor)
+                    eventRepo.findByDeviceIdBeforeCursor(
+                        deviceId = deviceId,
+                        cursorCreatedAt = decoded.createdAt,
+                        cursorId = decoded.id,
+                        pageable = limitReq
+                    )
+                }
 
                 val items = rows.map(::toDto)
                 val next = rows.lastOrNull()?.let { CursorCodec.encode(EventCursor(it.createdAt, it.id)) }
@@ -118,7 +120,7 @@ class DeviceService(
                     items = items,
                     page = null,
                     size = size,
-                    hasNext = rows.size == size, // standard heuristics (if capacity is full, there's probably more)
+                    hasNext = rows.size == size,
                     totalElements = null,
                     nextCursor = next
                 )
